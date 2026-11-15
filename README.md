@@ -1,13 +1,11 @@
 # Happy Minds: website
 
-The public website for Happy Minds. It uses the **same Firebase project as the HappyMinds Android app**
+The public website for Happy Minds.
 (Authentication + Cloud Firestore), so:
 
 - an account created on the website works in the app, and the other way round;
 - donations are paid with **PayFast**, through the same Cloudflare Worker the app uses, and appear in the
   same `donations` collection (and the app's admin dashboard).
-
-PHP only renders the shared header/footer; all data access happens in the browser through the Firebase web SDK.
 
 ## Project structure
 
@@ -30,18 +28,7 @@ HappyMinds/
 └── README.md
 ```
 
-## Setup
-
-### 1. Firebase: use the app's project
-
-In `public/assets/js/firebase-config.js` put the **web app** config of the *same* project the app uses
-(`happymind-fc3b4`): Firebase console → Project settings → Your apps → add a Web app (or reuse the one you have).
-
-> **Security rules live in the app project, not here.** There is deliberately no `firestore.rules` in this
-> website. The rules in the app's `firestore.rules` already cover everything the website does. Never publish
-> a different rules file to this project, or the app will break.
-
-### 2. Create your admin account(s) (staff portal)
+### Create your admin account(s) (staff portal)
 
 The staff portal (`admin.php`) uses the **same admin model as the app**: an admin is a Firebase Auth user that has a
 document in the `admins` collection. Set one up once:
@@ -54,38 +41,6 @@ document in the `admins` collection. Set one up once:
 That account can now sign in on `admin.php` and in the app's admin login. The Firestore rules (published from the app
 project) decide what an admin may do: read all users and donations, and approve or reject accounts. Nobody can add
 themselves to `admins` from a browser.
-
-### 3. Turn on Google sign-in
-
-Firebase console → **Authentication → Sign-in method → Google → Enable** (choose a project support email → Save).
-`localhost` is an authorised domain by default; when you go live, add your domain under
-*Authentication → Settings → Authorized domains*, otherwise Google sign-in fails with "not authorised".
-
-### 4. Update the Cloudflare Worker (one time)
-
-Browsers need permission (CORS) to call the Worker, and PayFast must know how to send donors back to the
-website. Replace these two files in the app's `cloudflare-worker` folder with the updated ones:
-
-- `src/index.js`
-- `wrangler.toml`  (then keep your own values; the new line is `WEB_ORIGINS`)
-
-Set `WEB_ORIGINS` to the exact addresses the website runs on (scheme + host + port, no path), comma-separated:
-
-```toml
-WEB_ORIGINS = "http://localhost,http://localhost:8000,https://www.your-live-site.org"
-```
-
-Then deploy: `cd cloudflare-worker && npx wrangler deploy`. The Android app keeps working unchanged.
-
-### 5. Run the website
-
-```
-cd public
-php -S localhost:8000
-```
-
-Open http://localhost:8000 (PHP 8+). Pages must be served over http(s). When you go live, add your domain
-under *Authentication → Settings → Authorized domains* and to `WEB_ORIGINS`.
 
 ## How it works
 
@@ -132,17 +87,3 @@ The website never writes donations; the Firestore rules only let the Worker do t
 | `users/{uid}` | `fullName`, `email`, `childName`, `age`, `grade`, `status` (PENDING / APPROVED / REJECTED), `isVolunteer`, `helpType`, `skills`, `createdAt` (ms) |
 | `donations/{id}` | `userId`, `amount` (text such as `"50.00"`), `frequency`, `fullName`, `email`, `status` (PENDING / COMPLETE / FAILED / CANCELLED), `pfPaymentId`, `timestamp` (ms) |
 
-## Known limitations
-
-- **Sandbox until you go live.** The Worker has `PF_SANDBOX = "true"`; switching to real payments is done in the
-  Worker (see the app's `FIREBASE_SETUP.md`, step B9).
-- **Bank EFT is information only.** EFT payments aren't recorded in Firestore or shown in donation history. Check the
-  bank details and Tax ID on the donate page are correct.
-- **No monthly donations**, matching the app.
-- **Google sign-in is website-only for now.** The Android app only has email + password, so someone who signs up
-  with Google can use the website, but not the app, until Google sign-in is added there too.
-- **Volunteer sign-up on the website** still opens the visitor's email app. Volunteer applications are created in
-  the app (`isVolunteer: true`).
-- **The staff portal has Volunteers and Donations tabs only**, as before. Approving *learner* accounts is done in the
-  app's admin dashboard.
-- Consider enabling Firebase **App Check** to limit abuse of sign-ups.
