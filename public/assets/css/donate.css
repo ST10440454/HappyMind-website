@@ -1,0 +1,65 @@
+/* Donate page: payment UI */
+/* ── Payment method tabs ── */
+.pay-tabs { display: flex; gap: 10px; margin-bottom: 24px; }
+.pay-tab {
+  flex: 1; padding: 13px 10px; border: 2px solid #dccfbb; border-radius: 16px;
+  background: #fffdf9; font: 600 .9rem Inter,sans-serif; color: #4a5b56;
+  cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px;
+  transition: all .25s;
+}
+.pay-tab .tab-icon { font-size: 1.4rem; }
+.pay-tab.active { border-color: #d94a2b; background: #fff3ee; color: #d94a2b; }
+.pay-tab:hover:not(.active) { border-color: #c5b8a4; background: #fdf8f2; }
+
+/* ── EFT table ── */
+.eft-table { width:100%; border-collapse: collapse; margin-bottom: 18px; font-size: .9rem; }
+.eft-table td { padding: 9px 12px; border-bottom: 1px solid #f0e8df; }
+.eft-table td:first-child { font-weight: 600; color: #4a5b56; width: 44%; }
+
+/* ── Donor notice banner ── */
+.donor-banner {
+  background: #fff3ee; border: 1.5px solid #f9b894; border-radius: 16px;
+  padding: 14px 18px; margin-bottom: 24px; font-size: .88rem; color: #7a3010;
+  display: flex; align-items: center; gap: 10px;
+}
+.donor-banner a { color: #d94a2b; font-weight: 600; text-decoration: underline; cursor: pointer; }
+
+/* ── Spinner ── */
+.spinner {
+  display: none; width: 22px; height: 22px; border: 3px solid #fff4;
+  border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite;
+  margin: 0 auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hm-btn.loading .btn-label { display: none; }
+.hm-btn.loading .spinner { display: inline-block; }
+
+/* ── History table ── */
+.history-table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+.history-table th { background: #f9f6f0; padding: 9px 14px; text-align: left; font-size: .68rem; font-weight: 700; color: #7a9490; text-transform: uppercase; letter-spacing: .07em; border-bottom: 1px solid #ece3d8; }
+.history-table td { padding: 11px 14px; border-bottom: 1px solid #f4efe8; color: #1e2a2f; }
+.history-table tr:last-child td { border-bottom: none; }
+.badge-green-sm { background: #e6f4ec; color: #1f6b3e; padding: 2px 8px; border-radius: 20px; font-size: .72rem; font-weight: 700; }
+.badge-blue-sm  { background: #e8f0fe; color: #1a4dad; padding: 2px 8px; border-radius: 20px; font-size: .72rem; font-weight: 700; }
+
+.badge-red-sm   { background: #fdecea; color: #8c1f1f; padding: 2px 8px; border-radius: 20px; font-size: .72rem; font-weight: 700; }
+
+/* ── Card type + PayFast note ── */
+.card-type { display: flex; gap: 22px; margin: 0 0 14px; font-size: .92rem; color: #2c423f; }
+.card-type label { display: flex; align-items: center; gap: 7px; cursor: pointer; font-weight: 600; }
+.pf-note { font-size: .82rem; color: #4a5b56; margin: 0 0 16px; line-height: 1.5; }
+.pf-note a { color: #d94a2b; font-weight: 600; }
+
+/* ── Payment result box (replaces the form after PayFast) ── */
+.result-box {
+  display: none; text-align: center; padding: 40px 24px; border-radius: 28px;
+  background: linear-gradient(135deg, #e6f4ec, #f0fbf7); border: 1px solid #bde5cd;
+}
+.result-box.show { display: block; }
+.result-box.pending { background: linear-gradient(135deg, #eef3fb, #f6f9fe); border-color: #c9d9f2; }
+.result-box.pending h3 { color: #1a4dad; }
+.result-box.problem { background: linear-gradient(135deg, #fdf1ee, #fff8f6); border-color: #f2c7bb; }
+.result-box.problem h3 { color: #8c1f1f; }
+.result-box .s-icon { font-size: 3.4rem; margin-bottom: 14px; }
+.result-box h3 { font: 600 1.7rem 'Playfair Display',serif; color: #1f6b3e; margin-bottom: 8px; }
+.result-box p { color: #4a5b56; max-width: 440px; margin: 0 auto 10px; }
